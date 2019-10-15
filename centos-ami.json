@@ -19,6 +19,12 @@
             "ssh_username": "{{user `ssh_username`}}",
             "ami_name": "csye6225_{{timestamp}}",
             "ami_description": "CentOS AMI for CSYE 6225 - Fall 2019",
+            "subnet_filter": {
+                "filters": {
+                    "tag:Network Type": "Public"
+                },
+                "random": true
+            },
             "launch_block_device_mappings": [
                 {
                     "device_name": "/dev/sda1",
