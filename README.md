@@ -1,18 +1,18 @@
-## Build Instructions
+# Build Instructions
 1. Clone the git repository: `git@github.com:<username>/         fa2019-team-002-ami.git`
    Usernames that can be used are SumitAnglekar94, shah-tejas, ishitasequeira
 
-## Installation
+# Installation
 1. `https://www.iannoble.co.uk/how-to-install-packer/` 
 2.  `https://www.digitalocean.com/community/tutorials/how-to-install-and-get-started-with-packer-on-an-ubuntu-12-04-vps`
 
 
-## Build AMI (Amazon Machine Image) using Packer commands
+# Build AMI (Amazon Machine Image) using Packer commands
 1. packer --version
 2. packer validate
 3. packer build 
 
-## Launch the EC2 instance from the created AMI
+# Launch the EC2 instance from the created AMI
 1. Login to AWS console.
 2. Navigate to services-> EC2 -> Instances
 3. Click on `Launch Instance`
@@ -26,51 +26,40 @@
     Add required rules and it's parameters like `type`,`Portocol`,`Port Range`,`Source`,`Description`.
 10. Review the instance and it's configuration and launch it.
 
-## Deploying the Web application on the running EC2 instance
+# Setting database environment and deploying the Web application on the running EC2 instance
 
-# Setting up database environment in CentOS 7
-1. Install the postgresql-server package and the “contrib” package, that adds some additional utilities and functionality:
-`sudo yum -y install postgresql-server postgresql-contrib`
+1. Copying the created .war file from recipe/target/recipe.war to the given initialized ec2 instance
+`scp <path-to-source-file> centos@<ec2_instance_ip>:<destination_path>`
 
-2. Create a new PostgreSQL database cluster: 
-`sudo postgresql-setup initdb`
-
-3. By default, PostgreSQL does not allow password authentication. We will change that by editing its host-based authentication (HBA) configuration.
+2. By default, PostgreSQL does not allow password authentication. We will change that by editing its host-based authentication (HBA) configuration.
 Open the HBA configuration with your favorite text editor. We will use vi:
 `sudo vi /var/lib/pgsql/data/pg_hba.conf`
 Then replace “ident” with “md5”
 PostgreSQL is now configured to allow password authentication.
 
-4. Start and enable PostgreSQL:
-`sudo systemctl start postgresql`
-`sudo systemctl enable postgresql`
+3. The installation procedure created a user account called cloud that is associated with the cloud role. In order to use Postgres, we’ll need to set password for user cloud. You can do that by typing:
+`sudo -i -u cloud psql -d recipe`
+`recipe=# \password`
+This will ask for a password. This password should be same as db_user_password
 
-5. The installation procedure created a user account called postgres that is associated with the default Postgres role. In order to use Postgres, we’ll need to log into that account. You can do that by typing:
-`sudo -i -u postgres`
+4. Restart the postgres
+`sudo systemctl restart postgresql`
 
-6. You can create the appropriate database by simply calling this command as the postgres user:
-`createdb recipe`
+5. Restart tomcat
+`sudo systemctl restart tomcat`
 
-7. We can create a new role by typing:
-`createuser --interactive`
-
-8. Now we connect to the recipe database as the Postgres role by typing:
-`psql`
-
-9. We give appropriate password to the created postgres role 
-`\password`
-
-10. `\q`
-
-11. Create a new cloud user 
-`sudo adduser cloud`
-
-12. `sudo -i -u cloud psql -d recipe`
-
-13. Set password for created user
-`\password`
+5. Check the tomcat log if the application has been deployed and started correctly
+`sudo tail -f -n 100 /opt/tomcat/logs/catalina.log`
 
 ## Verifying the application APIs, if they can be accessed from the IP address of EC2 instance
-1.
-2.
+
+### Append the ec2 instance ip in the url for testing application endpoints 
+ Example: 
+    1. Register a User (<instance_ip>:8080/v1/user)
+    2. Get User records (<instance_ip>:8080/v1/user/self)
+    3. Update User recordds (<instance_ip>:8080/v1/user/self)
+    4. Register a Recipe (<instance_ip>:8080/v1/recipe/)
+    5. Get recipe Information (<instance_ip>:8080/v1/recipe/{id})
+    6. Delete a particular recipe (<instance_ip>:8080/v1/recipe/{id})
+
 
