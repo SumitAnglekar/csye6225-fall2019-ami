@@ -24,6 +24,14 @@
 9. `Configure Security Group` : 
     Create a security group with required name and description.
     Add required rules and it's parameters like `type`,`Portocol`,`Port Range`,`Source`,`Description`.
+    Example: For our application we need following inbound rules:
+    
+      | Type  | Protocol | Port  | Source    | 
+      |-------|----------|-------|-----------| 
+      | HTTP  | TCP      | 80    | Anywhere  | 
+      | Custom| TCP      | 8080  | Anywhere  | 
+      | SSH   | TCP      | 22    | Anywhere  | 
+
 10. Review the instance and it's configuration and launch it.
 
 # Setting database environment and deploying the Web application on the running EC2 instance
