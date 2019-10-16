@@ -2,6 +2,6 @@
     "aws_region": "us-east-1",
     "aws_access_key": "",
     "aws_secret_key": "",
-    "subnet_id": "subnet-0604f17182a7e81ff",
+    "subnet_id": "",
     "source_ami": "ami-9887c6e7"
 }
