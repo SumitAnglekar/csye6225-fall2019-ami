@@ -43,6 +43,9 @@ PostgreSQL is now configured to allow password authentication.
 This will ask for a password. This password should be same as db_user_password
 
 4. Restart the postgres
+`sudo systemctl restart postgresql`
+
+5. Restart tomcat
 `sudo systemctl restart tomcat`
 
 5. Check the tomcat log if the application has been deployed and started correctly
