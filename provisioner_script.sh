@@ -26,7 +26,7 @@ echo 'Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid' >> tomcat.service
 echo 'Environment=CATALINA_HOME=/opt/tomcat' >> tomcat.service
 echo 'Environment=CATALINA_BASE=/opt/tomcat' >> tomcat.service
 echo 'Environment=\"CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC\"' >> tomcat.service
-echo 'Environment=\"JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true\"' >> tomcat.service
+echo 'Environment=\"JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true -Dspring.datasource.password='{`$db_user_password`}'\"' >> tomcat.service
 echo 'ExecStart=/opt/tomcat/bin/startup.sh' >> tomcat.service
 echo 'ExecStop=/bin/kill -15 $MAINPID' >> tomcat.service
 echo 'User=tomcat' >> tomcat.service
@@ -40,18 +40,4 @@ sudo systemctl daemon-reload
 sudo systemctl start tomcat.service
 sudo systemctl enable tomcat.service
 sudo systemctl status tomcat.service
-cd /tmp
-wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
-sudo yum -y install pgdg-centos96-9.6-3.noarch.rpm epel-release
-sudo yum -y update
-sudo yum -y install postgresql96-server postgresql96-contrib
-sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
-sudo systemctl start postgresql-9.6
-sudo systemctl enable postgresql-9.6
-sudo adduser cloud
-sudo usermod -a -G wheel centos
-sudo usermod -a -G wheel,centos root
-sudo usermod -a -G wheel,centos cloud
-sudo usermod -a -G wheel,centos postgres
-sudo -u postgres bash -c "psql -c \"CREATE USER cloud WITH PASSWORD '{$db_user_password}';\""
-sudo -u postgres createdb recipe
+sudo yum -y install postgresql-server postgresql-contrib
