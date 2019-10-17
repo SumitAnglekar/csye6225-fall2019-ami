@@ -4,13 +4,13 @@
 
 # Installation
 1. `https://www.iannoble.co.uk/how-to-install-packer/` 
-2.  `https://www.digitalocean.com/community/tutorials/how-to-install-and-get-started-with-packer-on-an-ubuntu-12-04-vps`
+2. `https://www.digitalocean.com/community/tutorials/how-to-install-and-get-started-with-packer-on-an-ubuntu-12-04-vps`
 
 
 # Build AMI (Amazon Machine Image) using Packer commands
 1. packer --version
-2. packer validate
-3. packer build 
+2. packer validate -var-file=<local-var-file-name> centos-ami.json
+3. packer build -var-file=<local-var-file-name> centos-ami.json
 
 # Launch the EC2 instance from the created AMI
 1. Login to AWS console.
