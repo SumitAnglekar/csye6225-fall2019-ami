@@ -12,48 +12,40 @@
 2. packer validate -var-file=<local-var-file-name> centos-ami.json
 3. packer build -var-file=<local-var-file-name> centos-ami.json
 
-# Launch the EC2 instance from the created AMI
-1. Login to AWS console.
-2. Navigate to services-> EC2 -> Instances
-3. Click on `Launch Instance`
-4. Select the created/build AMI from `My AMIs`
-5. Choose an `instance type` we keep it to default; ie : `t2.micro` (click on `Configure Instance Details`)
-6. Under `Configure Instance Details` select appropriate Network and Subnet and make sure that `Auto-assign Public IP` is always enabled (click Next:Add Storage)
-7. Default setup for Add Storage
-8. Default setup for Add Tags
-9. `Configure Security Group` : 
-    Create a security group with required name and description.
-    Add required rules and it's parameters like `type`,`Portocol`,`Port Range`,`Source`,`Description`.
-    Example: For our application we need following inbound rules:
-    
-      | Type  | Protocol | Port  | Source    | 
-      |-------|----------|-------|-----------| 
-      | HTTP  | TCP      | 80    | Anywhere  | 
-      | Custom| TCP      | 8080  | Anywhere  | 
-      | SSH   | TCP      | 22    | Anywhere  | 
+### Once you run packer commands your AMI is created, check the UI and verify with the AMI id in the terminal
 
-10. Review the instance and it's configuration and launch it.
+# Launch the EC2 instance for the created AMI
+### (In this assignment we are going to launch the instance with terraform commands directly)
+### Confirm that you have set all your variable values correctly in terraform.tfvars file
 
-# Setting database environment and deploying the Web application on the running EC2 instance
+1. Run the `terraform init` command in the root "terraform directory"
+2. `terraform plan` to check if all the required variables have their respective values
+3. `terraform apply` to run the entire terraform script to generate the ec2 instance. (This might take a while ~10mins)
+4. Check the UI for the EC2 instance and confirm that it's up and running (2/2).
+
+# Deploying the Web application on the running EC2 instance
+
+1. Before starting with deployment, make sure you have cleaned and install the repository so that you have all the dependencies as well.
 
 1. Copying the created .war file from recipe/target/recipe.war to the given initialized ec2 instance
 `scp <path-to-source-file> centos@<ec2_instance_ip>:<destination_path>`
+example: `scp /home/sumit/Documents/cloud/ccwebapp/webapp/recipe/target/recipe.war centos@34.200.252.13:~`
 
-2. By default, PostgreSQL does not allow password authentication. We will change that by editing its host-based authentication (HBA) configuration.
-Open the HBA configuration with your favorite text editor. We will use vi:
-`sudo vi /var/lib/pgsql/data/pg_hba.conf`
-Then replace “ident” with “md5”
-PostgreSQL is now configured to allow password authentication.
+2. Login to the centos
+`ssh centos@34.200.252.13`
 
-3. The installation procedure created a user account called cloud that is associated with the cloud role. In order to use Postgres, we’ll need to set password for user cloud. You can do that by typing:
-`sudo -i -u cloud psql -d recipe`
-`recipe=# \password`
-This will ask for a password. This password should be same as db_user_password
+3. Make the Tomcat directory writeable
+`cd /opt/tomcat/`
+`sudo chmod -R 777 .`
 
-4. Restart the postgres
+4. Copy the .war file and deploy it in webapps
+`cd webapps`
+`cp ~/recipe.war .`
+
+5. Restart the postgres
 `sudo systemctl restart postgresql`
 
-5. Restart tomcat
+6. Restart tomcat
 `sudo systemctl restart tomcat`
 
 5. Check the tomcat log if the application has been deployed and started correctly
@@ -64,10 +56,25 @@ This will ask for a password. This password should be same as db_user_password
 ### Append the ec2 instance ip in the url for testing application endpoints 
  Example: 
     1. Register a User (<instance_ip>:8080/v1/user)
+    eg: `54.147.44.242:8080/recipe/v1/user`
     2. Get User records (<instance_ip>:8080/v1/user/self)
+    eg: `54.147.44.242:8080/recipe/v1/user/self`
     3. Update User recordds (<instance_ip>:8080/v1/user/self)
+    eg: `54.147.44.242:8080/recipe/v1/user/self`
     4. Register a Recipe (<instance_ip>:8080/v1/recipe/)
+    eg: `54.147.44.242:8080/recipe/v1/recipe/`
     5. Get recipe Information (<instance_ip>:8080/v1/recipe/{id})
-    6. Delete a particular recipe (<instance_ip>:8080/v1/recipe/{id})
-
-
+    eg: `54.147.44.242:8080/recipe/v1/recipe/aac56c9f-9818-42f5-bbb7-f8816b79be3b`
+    6. Get the newest recipe (<instance_ip>:8080/v1/recipes)
+    eg: `54.147.44.242:8080/recipe/v1/recipes`
+    7. Changes in the recipe (PUT) (<instance_ip>:8080/v1/recipe/{id}) 
+    eg: `54.147.44.242:8080/recipe/v1/recipes`
+    8. Delete a particular recipe (<instance_ip>:8080/v1/recipe/{id})
+    eg: `54.147.44.242:8080/recipe/v1/recipe/aac56c9f-9818-42f5-bbb7-f8816b79be3b`
+    9. Register an Image (<instance_ip>:8080/v1/recipe/{id}/image)
+    eg: `54.147.44.242:8080/recipe/v1/recipe/0c4307ea-90da-49a9-aa4f-5b9864f4d674/image`
+    10. Get an image (<instance_ip>:8080/v1/recipe/{recipeId}/image/{imageId})
+    eg: `54.147.44.242:8080/recipe/v1/recipe/0c4307ea-90da-49a9-aa4f-5b9864f4d674/image/aac56c9f-9818-42f5-bbb7-f8816b79be3b`
+    11. Delete an image (<instance_ip>:8080/v1/recipe/{recipeId}/image/{imageId})
+    eg: `54.147.44.242:8080/recipe/v1/recipe/0c4307ea-90da-49a9-aa4f-5b9864f4d674/image/aac56c9f-9818-42f5-bbb7-f8816b79be3b`
+   
