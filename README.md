@@ -1,3 +1,11 @@
+## Team Information
+
+| Name | NEU ID | Email Address |
+| --- | --- | --- |
+| Ishita Sequeira| 001403357 | sequeira.i@husky.neu.edu |
+| Tejas Shah | 001449694 | shah.te@husky.neu.edu |
+| Sumit Anglekar | 001475969 | anglekar.s@husky.neu.edu |
+
 # Build Instructions
 1. Clone the git repository: `git@github.com:<username>/         fa2019-team-002-ami.git`
    Usernames that can be used are SumitAnglekar94, shah-tejas, ishitasequeira
