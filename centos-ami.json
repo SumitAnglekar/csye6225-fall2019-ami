@@ -40,7 +40,7 @@
             "type": "shell",
             "inline": [
                 "chmod u+x /tmp/provisioner_script.sh",
-                "/tmp/provisioner_script.sh {{user `db_user_password`}}"
+                "/tmp/provisioner_script.sh {{user `aws_region`}}"
             ]
         }
     ]
