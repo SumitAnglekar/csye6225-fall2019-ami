@@ -5,8 +5,7 @@
         "aws_region": "",
         "subnet_id": "",
         "source_ami": "",
-        "ssh_username": "centos",
-        "db_user_password": ""
+        "ssh_username": "centos"
     },
     "builders": [
         {
@@ -40,7 +39,7 @@
             "type": "shell",
             "inline": [
                 "chmod u+x /tmp/provisioner_script.sh",
-                "/tmp/provisioner_script.sh {{user `db_user_password`}}"
+                "/tmp/provisioner_script.sh {{user `aws_region`}}"
             ]
         }
     ]
