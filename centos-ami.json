@@ -5,8 +5,7 @@
         "aws_region": "",
         "subnet_id": "",
         "source_ami": "",
-        "ssh_username": "centos",
-        "db_user_password": ""
+        "ssh_username": "centos"
     },
     "builders": [
         {
