@@ -36,6 +36,11 @@
             "destination": "/tmp/provisioner_script.sh"
         },
         {
+            "type": "file",
+            "source": "cloudwatch_config.json",
+            "destination": "/tmp/cloudwatch-config.json"
+        },
+        {
             "type": "shell",
             "inline": [
                 "chmod u+x /tmp/provisioner_script.sh",
