@@ -38,7 +38,7 @@
         {
             "type": "file",
             "source": "cloudwatch_config.json",
-            "destination": "/tmp/cloudwatch-config.json"
+            "destination": "/tmp/cloudwatch_config.json"
         },
         {
             "type": "shell",
