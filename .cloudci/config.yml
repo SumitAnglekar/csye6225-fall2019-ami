@@ -3,8 +3,11 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6.8-jessie
+    branches:
+      only:
+        - ${branch_to_build}
     steps:
-      - checkout
+      - checkout
       - run:
           name: apt-get
           command: sudo apt-get update && sudo apt-get install wget zip unzip -y
@@ -17,12 +20,21 @@ jobs:
           command: sudo pip install awscli
       - run: 
           name: Packer Download
-          command: wget -q https://releases.hashicorp.com/packer/0.9.0/packer_0.9.0_linux_386.zip
-          unzip packer_0.9.0_linux_386.zip
-          ls -al
-          chmod +x packer
-          ls -al
+          command: |
+            wget -q https://releases.hashicorp.com/packer/1.4.4/packer_1.4.4_linux_amd64.zip
+            unzip packer*.zip
+            ls -al
+            chmod +x packer
+            ls -al
       - run:
-          name: Validate & Build AMI
-          command: ./packer validate -var-file=ami-vars-local.json centos-ami.json 
-                  ./packer build -var-file=ami-vars-local.json centos-ami.json
+          name: Validate AMI
+          command: ./packer validate centos-ami.json
+      - run:
+          name: Build AMI
+          command: |
+            ./packer build \
+            -var "aws_access_key=${aws_access_key}" \
+            -var "aws_secret_key=${aws_secret_key}" \
+            -var "aws_region=${aws_region}" \
+            -var "source_ami=${source_ami}" \
+            centos-ami.json
