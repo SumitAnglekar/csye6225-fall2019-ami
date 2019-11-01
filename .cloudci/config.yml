@@ -2,12 +2,16 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:2.7.15
+      - image: circleci/python:3.6.8-jessie
     steps:
       - checkout
       - run:
           name: apt-get
           command: sudo apt-get update && sudo apt-get install wget zip unzip -y
+      - run:
+          name: python and pip version
+          command: python3 --version
+          pip3 --version
       - run:
           name: Install awscli
           command: sudo pip install awscli
