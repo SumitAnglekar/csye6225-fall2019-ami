@@ -5,7 +5,7 @@ jobs:
       - image: circleci/python:3.6.8-jessie
     branches:
       only:
-        - ${branch_to_build}
+        - "${branch_to_build}"
     steps:
       - checkout
       - run:
