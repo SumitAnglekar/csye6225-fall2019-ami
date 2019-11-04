@@ -26,7 +26,11 @@
                     "volume_type": "gp2",
                     "delete_on_termination": true
                 }
-            ]
+            ],
+            "tags": {
+                "OS_Version": "centos",
+                "Release": "Latest"
+            }
         }
     ],
     "provisioners": [
