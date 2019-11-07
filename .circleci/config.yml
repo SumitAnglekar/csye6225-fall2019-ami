@@ -3,9 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6.8-jessie
-    branches:
-      only:
-        - assignment7
     steps:
       - checkout
       - run:
