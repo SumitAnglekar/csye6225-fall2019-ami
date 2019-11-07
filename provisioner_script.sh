@@ -1,5 +1,5 @@
 #!/bin/bash -e
-db_user_password=$1
+aws_region=$1
 sudo yum -y update
 sudo yum -y install java-1.8.0-openjdk
 sudo yum -y install wget
@@ -38,10 +38,6 @@ echo '[Install]' >> tomcat.service
 echo 'WantedBy=multi-user.target' >> tomcat.service
 cd /opt/tomcat
 sudo chmod -R 777 .
-cd bin
-sudo touch setenv.sh
-sudo chmod 777 setenv.sh
-sudo echo 'JAVA_OPTS=-Dspring.datasource.password='$db_user_password >> setenv.sh
 sudo systemctl daemon-reload
 sudo systemctl start tomcat.service
 sudo systemctl enable tomcat.service
@@ -54,3 +50,18 @@ sudo adduser cloud
 sudo -u postgres createdb recipe
 sudo -u postgres createuser --createrole cloud --superuser
 sudo systemctl restart postgresql
+sudo yum -y install ruby
+cd /home/centos
+wget https://aws-codedeploy-${aws_region}.s3.${aws_region}.amazonaws.com/latest/install
+chmod +x ./install
+sudo ./install auto
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm
+sudo rpm -U ./amazon-cloudwatch-agent.rpm
+sudo cp /tmp/cloudwatch_config.json /opt/cloudwatch_config.json
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch_config.json -s
+cd /opt
+sudo wget https://s3.amazonaws.com/configfileforcloudwatch/amazon-cloudwatch-agent.service
+sudo cp amazon-cloudwatch-agent.service /usr/lib/systemd/system/
+sudo systemctl enable amazon-cloudwatch-agent.service
+sudo systemctl start amazon-cloudwatch-agent.service
+echo 'successfully started cloudwatch agent'

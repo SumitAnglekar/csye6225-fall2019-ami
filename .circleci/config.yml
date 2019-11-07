@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.8-jessie
+    branches:
+      only:
+        - assignment7
+    steps:
+      - checkout
+      - run:
+          name: Install packages
+          command: sudo apt-get update && sudo apt-get install wget zip unzip -y
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+      - run:
+          name: Download packer
+          command: |
+            wget -q https://releases.hashicorp.com/packer/1.4.4/packer_1.4.4_linux_amd64.zip
+            unzip packer*.zip
+            chmod +x packer
+      - run:
+          name: Validate Packer Template
+          command: |
+            ./packer validate \
+            -var "aws_access_key=${aws_access_key}" \
+            -var "aws_secret_key=${aws_secret_key}" \
+            -var "aws_region=${aws_region}" \
+            -var "source_ami=${source_ami}" \
+            centos-ami.json
+      - run:
+          name: Build AMI
+          command: |
+            ./packer build \
+            -var "aws_access_key=${aws_access_key}" \
+            -var "aws_secret_key=${aws_secret_key}" \
+            -var "aws_region=${aws_region}" \
+            -var "source_ami=${source_ami}" \
+            centos-ami.json

@@ -86,3 +86,10 @@ example: `scp /home/sumit/Documents/cloud/ccwebapp/webapp/recipe/target/recipe.w
     11. Delete an image (<instance_ip>:8080/v1/recipe/{recipeId}/image/{imageId})
     eg: `54.147.44.242:8080/recipe/v1/recipe/0c4307ea-90da-49a9-aa4f-5b9864f4d674/image/aac56c9f-9818-42f5-bbb7-f8816b79be3b`
    
+## CI/CD
+1. Create policy for circleci IAM user to give access to create new AMI: 
+    `terraform plan -target module.application.aws_iam_user_policy_attachment.circleci_ec2_policy_attach -out run.plan`
+    `terraform apply run.plan`
+2. Trigger the circleci plan to build new AMI:
+    `curl -u <CIRCLECI_TOKEN>: -d build_parameters[CIRCLE_JOB]=build https://circleci.com/api/v1.1/project/github/<ORGANIZATION>/csye6225-fall2019-ami/tree/<BRANCH>`
+3. Once the build is completed a new AMI will be created and registered with AWS.
